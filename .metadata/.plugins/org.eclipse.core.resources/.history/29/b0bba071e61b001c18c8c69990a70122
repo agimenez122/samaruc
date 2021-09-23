@@ -1,0 +1,10 @@
+MODULE uno;
+(* programa vacio*)
+  PROCEDURE Restar (a: INTEGER; b: INTEGER) : INTEGER;
+  	VAR s: INTEGER;
+ 	BEGIN
+ 		s := a-b;
+ 		 	
+ 	END 
+
+  END uno;

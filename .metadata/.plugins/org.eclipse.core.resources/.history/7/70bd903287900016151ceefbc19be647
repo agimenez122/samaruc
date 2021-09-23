@@ -1,0 +1,204 @@
+package compiler.syntax;
+
+// Declaración de importaciones 
+//(No modificar las proporcionadas. Se pueden agregar mas)
+
+import java_cup.runtime.Symbol;
+import java.util.*;
+
+import es.uned.lsi.compiler.lexical.*;
+import es.uned.lsi.compiler.code.*;
+import es.uned.lsi.compiler.intermediate.*;
+import es.uned.lsi.compiler.semantic.*;
+import es.uned.lsi.compiler.semantic.symbol.*;
+import es.uned.lsi.compiler.semantic.type.*;
+import es.uned.lsi.compiler.syntax.*;
+
+import compiler.CompilerContext;
+import compiler.lexical.*;
+import compiler.syntax.nonTerminal.*;
+import compiler.semantic.*;
+import compiler.semantic.symbol.*;
+import compiler.semantic.type.*;
+import compiler.intermediate.*;
+import compiler.code.*;
+
+// Declaración del código de usuario
+
+action code {:
+	
+	SyntaxErrorManager   syntaxErrorManager   = CompilerContext.getSyntaxErrorManager();
+	SemanticErrorManager semanticErrorManager = CompilerContext.getSemanticErrorManager ();
+	ScopeManagerIF       scopeManager         = CompilerContext.getScopeManager ();
+	FinalCodeFactoryIF   finalCodeFactory     = CompilerContext.getFinalCodeFactory ();
+
+:}	
+
+parser code {:
+	SyntaxErrorManager syntaxErrorManager = CompilerContext.getSyntaxErrorManager();
+	
+	public void syntax_error(Symbol symbol)
+	{ 
+	    Token token = (Token) symbol.value;
+	    syntaxErrorManager.syntaxError ("Error sintactico", token);	    
+	}
+		
+	public void unrecovered_syntax_error(java_cup.runtime.Symbol symbol)
+	{	
+	    Token token = (Token) symbol.value;
+	    syntaxErrorManager.syntaxFatalError ("Error fatal", token);
+	}
+:}
+
+// Declaración de terminales (Ejemplo)
+
+terminal Token PLUS;
+terminal Token MINUS;
+
+terminal Token ENTERO;
+terminal Token LITERAL;
+
+terminal Token ABREPARENT; 
+terminal Token CIERPARENT;
+terminal Token ABRECORCHE;
+terminal Token CIERCORCHE; 
+	
+terminal Token PUNTOCOMA; 
+terminal Token DOSPUNTOS; 
+
+terminal Token SUMA;
+terminal Token RESTA;
+terminal Token DIVISION;
+terminal Token PRODUCTO;
+
+terminal Token MENOR;
+terminal Token MAYOR;
+terminal Token IGUAL;
+terminal Token DISTINTO;
+
+terminal Token CONJUNCION;
+terminal Token DISYUNCION;
+terminal Token NEGACION;
+
+terminal Token ASIGNACION;
+
+terminal Token ACREGISTRO;
+terminal Token ACVECTOR;
+
+terminal Token ID;
+
+terminal Token BEGIN;
+terminal Token END;
+terminal Token DO;
+terminal Token BOOLEAN;
+terminal Token AND;
+terminal Token ARRAY;
+terminal Token ELSE;
+terminal Token CONST;
+
+
+
+terminal Token FALSE;
+terminal Token FOR;
+terminal Token IF;
+terminal Token INTEGER;
+terminal Token MODULE;
+terminal Token NOT;
+terminal Token OF;
+terminal Token OR;
+terminal Token PROCEDURE;
+terminal Token RECORD;
+terminal Token RETURN;
+terminal Token THEN;  
+terminal Token TO;   
+terminal Token TRUE; 
+terminal Token TYPE; 
+terminal Token VAR;    
+terminal Token WHILE;  
+terminal Token WRITESTRING;
+terminal Token WRITEINT;
+terminal Token WRITELN;
+
+
+// ...
+
+
+// Declaración de no terminales
+// no modificar los propuestos
+
+non terminal  			program;
+non terminal Axiom		axiom;
+// ...
+non terminal			decDeclaraciones, decBloque;
+non terminal 			decConstantes, decConstante;
+non terminal			decModule;
+non terminal			valorExp, valorExpConst;
+non terminal			listaSentencias, cuerpoProcedure;
+non terminal			decBloqueProg;
+non terminal			decTipos, decVariables, decSubProgramas, decProcedure, decParametro, decParaTipo;
+non terminal			decVectorInteger, decVectorBoolean,decRegistro, decRegistros ;
+// Declaración de relaciones de precedencia
+precedence left     PLUS,
+                    MINUS;
+// ...
+
+// Declaración de reglas de producción
+
+
+start with program;
+
+program ::= 
+  {: 
+        syntaxErrorManager.syntaxInfo ("Starting parsing..."); 
+   :}
+  axiom:ax
+  {: 
+  		// No modificar esta estructudecBloqueProgra, aunque se pueden añadir más acciones semánticas
+  		// Para la entrega de febrero pueden comentarse las dos sentencias siguientes:
+  		//List intermediateCode = ax.getIntermediateCode ();
+  		//finalCodeFactory.create (intermediateCode);
+  		// En caso de no comentarse las sentencias anteriores puede generar una excepcion
+  		// en las llamadas a cupTest en la entrega de Febrero. Esto es debido a que 
+  		// aún no se tendrá implementada la generación de código intermedio ni final.
+  		// Para la entrega de Junio deberán descomentarse y usarse.
+  		
+  		syntaxErrorManager.syntaxInfo ("Parsing process ended.");
+   :};
+
+//axiom ::= ;
+axiom ::= decModule decBloqueProg | decModule decDeclaraciones decBloqueProg;
+decModule ::= MODULE valorExp PUNTOCOMA ;
+decDeclaraciones ::= decConstantes decTipos decVariables decSubProgramas;
+decBloqueProg ::= BEGIN listaSentencias END valorExp PUNTOCOMA | BEGIN END valorExp PUNTOCOMA ;
+
+decConstantes ::= CONST ID IGUAL valorExp PUNTOCOMA | ID IGUAL valorExp PUNTOCOMA; 
+decVariables ::= VAR ID IGUAL valorExpConst PUNTOCOMA | VAR ID IGUAL ID PUNTOCOMA | ID IGUAL valorExpConst PUNTOCOMA | ID IGUAL ID PUNTOCOMA ;
+
+decTipos ::= decVectorInteger | decVectorBoolean | decRegistro ;
+
+decVectorInteger ::= TYPE INTEGER IGUAL ARRAY ABRECORCHE ENTERO ACREGISTRO ACREGISTRO ENTERO CIERCORCHE OF INTEGER PUNTOCOMA;
+decVectorBoolean ::= TYPE BOOLEAN IGUAL ARRAY ABRECORCHE ENTERO ACREGISTRO ACREGISTRO ENTERO CIERCORCHE OF BOOLEAN PUNTOCOMA;
+
+decRegistro ::= TYPE ID IGUAL RECORD decRegistros PUNTOCOMA ;
+
+decRegistros ::= ID DOSPUNTOS valorExpConst PUNTOCOMA decRegistros | ID DOSPUNTOS valorExpConst PUNTOCOMA ;
+
+
+//Subprogramas:
+decSubProgramas ::=  decProcedure ;
+decProcedure ::= PROCEDURE ID ABREPARENT decParametro CIERPARENT PUNTOCOMA cuerpoProcedure | PROCEDURE ID ABREPARENT CIERPARENT PUNTOCOMA cuerpoProcedure ;
+
+decParametro ::= decParaTipo | decParaTipo decParaTipo ;
+decParaTipo ::=  ID DOSPUNTOS valorExpConst | ID DOSPUNTOS ID | ID decParaTipo ; 
+
+cuerpoProcedure ::= decDeclaraciones decBloqueProg | decBloqueProg;
+								  
+
+valorExp ::= ID ;
+
+valorExpConst ::= ENTERO | TRUE | FALSE;
+
+
+
+
+
