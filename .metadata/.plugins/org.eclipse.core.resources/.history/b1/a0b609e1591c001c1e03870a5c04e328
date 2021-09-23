@@ -82,7 +82,7 @@ terminal Token FALS;
 terminal Token FOR;
 terminal Token IF;
 terminal Token INTEGER;
-terminal Token MODUL;
+terminal Token MODULE;
 terminal Token OF;
 terminal Token PROCEDURE;
 terminal Token RECORD;
@@ -173,9 +173,9 @@ program ::=
 axiom ::= decModule decBloqueProg
         | decModule decDeclaraciones decBloqueProg;
     
-decModule ::= MODUL valorExp PUNTOCOMA 
-       	   | error valorExp PUNTOCOMA {:syntaxErrorManager.syntaxInfo("Error. Falta la expresión MODUL");:}
-       	   | MODUL valorExp error {:syntaxErrorManager.syntaxInfo("Error. Falta el punto y coma");:};
+decModule ::= MODULE valorExp PUNTOCOMA 
+       	   | error valorExp PUNTOCOMA {:syntaxErrorManager.syntaxInfo("Error. Falta la expresión MODULE");:}
+       	   | MODULE valorExp error {:syntaxErrorManager.syntaxInfo("Error. Falta el punto y coma");:};
 
 
 decDeclaraciones ::= decDeclara

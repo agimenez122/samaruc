@@ -67,7 +67,7 @@ COMENTARIOINI= "(*"
 COMENTARIOFIN= "*)"
 COMIDOB= "\""
 COMA= ","
-ENTERS=[0-9]+
+ENTERAS=[0-9]+
 ID=[a-zA-Z]([a-zA-Z]|[0-9])*
 
 %%
@@ -86,7 +86,7 @@ ID=[a-zA-Z]([a-zA-Z]|[0-9])*
            			       return token;
 			}
 
-{ENTERS} { return crearToken(sym.ENTER); }
+{ENTERAS} { return crearToken(sym.ENTER); }
 			
 //DELIMITADORES		
 
@@ -121,12 +121,12 @@ ID=[a-zA-Z]([a-zA-Z]|[0-9])*
 "CONST"   { return crearToken(sym.CONST); }
 "DO"      { return crearToken(sym.DO); }
 "ELSE"    { return crearToken(sym.ELSE); }
-"FI"     { return crearToken(sym.FI); }
+"END"     { return crearToken(sym.END); }
 "FALS"   { return crearToken(sym.FALS); }
 "FOR"     { return crearToken(sym.FOR); }
 "IF"      { return crearToken(sym.IF); }
 "INTEGER" { return crearToken(sym.INTEGER); }
-"MODUL"  { return crearToken(sym.MODUL); }
+"MODULE"  { return crearToken(sym.MODULE); }
 "NOT"     { return crearToken(sym.NOT); }
 "OF"      { return crearToken(sym.OF); }
 "OR"      { return crearToken(sym.OR); }

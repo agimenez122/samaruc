@@ -1,4 +1,4 @@
-MODULE uno;
+MODUL uno;
 (* programa vacio *)
   CONST constante1 = 5;
 	constante2 = TRUE;
@@ -16,14 +16,14 @@ MODULE uno;
 	VAR aux, index : INTEGER;
   BEGIN
 	aux := index;
-  END procedimiento;
+  FI procedimiento;
 
  PROCEDURE funcion ():BOOLEAN;
         VAR aux, index : INTEGER;
   BEGIN 
         aux := index;
 (*	RETURN aux;   *)
-  END funcion;
+  FI funcion;
 
 
   BEGIN
@@ -59,18 +59,18 @@ MODULE uno;
 			funcion2(V[4], 5, variable, TRUE);
 			funcion3();
 
-		END;
-	END;
+		FI;
+	FI;
 	
 	variable := funcion2(5, 4-3);
 
 	FOR indice := 0 TO 34
 	DO
 		v[45] := 4>1;
-	END;
+	FI;
 
 	WRITELN;
 	WRITEINT(24*3);
 	WRITESTRING("Hola Mundo!"); 
 	
-  END uno;
+  FI uno;

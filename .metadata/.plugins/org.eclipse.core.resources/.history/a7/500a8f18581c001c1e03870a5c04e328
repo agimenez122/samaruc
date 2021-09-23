@@ -71,7 +71,7 @@ terminal Token ACVECTOR;
 terminal Token ID;
 terminal Token COMA;
 terminal Token BEGIN;
-terminal Token FI;
+terminal Token END;
 terminal Token DO;
 terminal Token BOOLEAN;
 terminal Token AND;
@@ -82,7 +82,7 @@ terminal Token FALS;
 terminal Token FOR;
 terminal Token IF;
 terminal Token INTEGER;
-terminal Token MODUL;
+terminal Token MODULE;
 terminal Token OF;
 terminal Token PROCEDURE;
 terminal Token RECORD;
@@ -173,9 +173,9 @@ program ::=
 axiom ::= decModule decBloqueProg
         | decModule decDeclaraciones decBloqueProg;
     
-decModule ::= MODUL valorExp PUNTOCOMA 
-       	   | error valorExp PUNTOCOMA {:syntaxErrorManager.syntaxInfo("Error. Falta la expresión MODUL");:}
-       	   | MODUL valorExp error {:syntaxErrorManager.syntaxInfo("Error. Falta el punto y coma");:};
+decModule ::= MODULE valorExp PUNTOCOMA 
+       	   | error valorExp PUNTOCOMA {:syntaxErrorManager.syntaxInfo("Error. Falta la expresión MODULE");:}
+       	   | MODULE valorExp error {:syntaxErrorManager.syntaxInfo("Error. Falta el punto y coma");:};
 
 
 decDeclaraciones ::= decDeclara
@@ -186,10 +186,10 @@ decDeclara ::= decConstantes
            | decVariables
            | decSubProgramas;
                 
-decBloqueProg ::= BEGIN sentenciasFUN FI valorExp PUNTOCOMA 
-       	    //    | error sentenciasFUN FI valorExp PUNTOCOMA {:syntaxErrorManager.syntaxInfo("Error. Falta el BEGIN");:}
-       	        | BEGIN sentenciasFUN error valorExp PUNTOCOMA {:syntaxErrorManager.syntaxInfo("Error. Falta el FI");:}
-       	        | BEGIN sentenciasFUN FI valorExp error  {:syntaxErrorManager.syntaxInfo("Error. Falta el punto y coma");:};
+decBloqueProg ::= BEGIN sentenciasFUN END valorExp PUNTOCOMA 
+       	    //    | error sentenciasFUN END valorExp PUNTOCOMA {:syntaxErrorManager.syntaxInfo("Error. Falta el BEGIN");:}
+       	        | BEGIN sentenciasFUN error valorExp PUNTOCOMA {:syntaxErrorManager.syntaxInfo("Error. Falta el END");:}
+       	        | BEGIN sentenciasFUN END valorExp error  {:syntaxErrorManager.syntaxInfo("Error. Falta el punto y coma");:};
        	   
 
 decConstantes ::= CONST expresionConstantes ;
@@ -257,8 +257,8 @@ cuerpoProcedure ::= decDeclaraciones decBloqueProg
 cuerpoFun ::=     decDeclaraciones decBloqueFun
                   | decBloqueFun;
                 
-decBloqueFun ::= BEGIN sentenciasFUN FI valorExp PUNTOCOMA 
-		   	   | BEGIN sentenciasFUN FI valorExp error  {:syntaxErrorManager.syntaxInfo("Error. Falta el punto y coma");:};
+decBloqueFun ::= BEGIN sentenciasFUN END valorExp PUNTOCOMA 
+		   	   | BEGIN sentenciasFUN END valorExp error  {:syntaxErrorManager.syntaxInfo("Error. Falta el punto y coma");:};
 
 sentenciasFUN ::= sentencia sentenciasFUN | sentReturn sentenciasFUN |;
 
@@ -311,22 +311,22 @@ expreVectorAcceso ::= valorExp ABRECORCHE valorCalc CIERCORCHE;
 
 //Invocación de funciones
 
-sentIf ::= IF expreAritmeLogicas THEN sentenciasFUN FI PUNTOCOMA
-       |   IF expreAritmeLogicas THEN sentenciasFUN ELSE sentenciasFUN FI PUNTOCOMA
-       |   IF expreAritmeLogicas THEN sentenciasFUN FI error{:syntaxErrorManager.syntaxInfo("Error. Falta el punto y coma del If");:}
-	   |   IF expreAritmeLogicas THEN sentenciasFUN ELSE sentenciasFUN FI error{:syntaxErrorManager.syntaxInfo("Error. Falta el punto y coma del If");:}      
-	   |   IF error THEN sentenciasFUN FI PUNTOCOMA{:syntaxErrorManager.syntaxInfo("Error. Falta la expresión logica del If");:}
-	   |   IF error THEN sentenciasFUN ELSE sentenciasFUN FI PUNTOCOMA{:syntaxErrorManager.syntaxInfo("Error. Falta la expresión logica del If");:};
+sentIf ::= IF expreAritmeLogicas THEN sentenciasFUN END PUNTOCOMA
+       |   IF expreAritmeLogicas THEN sentenciasFUN ELSE sentenciasFUN END PUNTOCOMA
+       |   IF expreAritmeLogicas THEN sentenciasFUN END error{:syntaxErrorManager.syntaxInfo("Error. Falta el punto y coma del If");:}
+	   |   IF expreAritmeLogicas THEN sentenciasFUN ELSE sentenciasFUN END error{:syntaxErrorManager.syntaxInfo("Error. Falta el punto y coma del If");:}      
+	   |   IF error THEN sentenciasFUN END PUNTOCOMA{:syntaxErrorManager.syntaxInfo("Error. Falta la expresión logica del If");:}
+	   |   IF error THEN sentenciasFUN ELSE sentenciasFUN END PUNTOCOMA{:syntaxErrorManager.syntaxInfo("Error. Falta la expresión logica del If");:};
 
-sentFor ::= FOR expreAritmeLogicas ASIGNACION expreAritmeLogicas TO expreAritmeLogicas DO sentenciasFUN FI PUNTOCOMA
-         |  FOR error ASIGNACION expreAritmeLogicas TO expreAritmeLogicas DO sentenciasFUN FI PUNTOCOMA{:syntaxErrorManager.syntaxInfo("Error. Falta la expresión logica del For");:}
-         |  FOR expreAritmeLogicas error expreAritmeLogicas TO expreAritmeLogicas DO sentenciasFUN FI PUNTOCOMA{:syntaxErrorManager.syntaxInfo("Error. Falta la asignación del For");:}
-         |  FOR expreAritmeLogicas ASIGNACION error TO expreAritmeLogicas DO sentenciasFUN FI PUNTOCOMA{:syntaxErrorManager.syntaxInfo("Error. Falta la expresión logica antes del TO");:}
-         |  FOR expreAritmeLogicas ASIGNACION expreAritmeLogicas error expreAritmeLogicas DO sentenciasFUN FI PUNTOCOMA{:syntaxErrorManager.syntaxInfo("Error. Falta el TO del For");:}
-         |  FOR expreAritmeLogicas ASIGNACION expreAritmeLogicas TO error DO sentenciasFUN FI PUNTOCOMA{:syntaxErrorManager.syntaxInfo("Error. Falta la expresión logica despues del TO");:}
-         |  FOR expreAritmeLogicas ASIGNACION expreAritmeLogicas TO expreAritmeLogicas error sentenciasFUN FI PUNTOCOMA{:syntaxErrorManager.syntaxInfo("Error. Falta el DO del For");:}
-         |  FOR expreAritmeLogicas ASIGNACION expreAritmeLogicas TO expreAritmeLogicas DO sentenciasFUN error PUNTOCOMA{:syntaxErrorManager.syntaxInfo("Error. Falta cerrar bloque con FI");:}
-         |  FOR expreAritmeLogicas ASIGNACION expreAritmeLogicas TO expreAritmeLogicas DO sentenciasFUN FI error{:syntaxErrorManager.syntaxInfo("Error. Falta punto y coma");:};
+sentFor ::= FOR expreAritmeLogicas ASIGNACION expreAritmeLogicas TO expreAritmeLogicas DO sentenciasFUN END PUNTOCOMA
+         |  FOR error ASIGNACION expreAritmeLogicas TO expreAritmeLogicas DO sentenciasFUN END PUNTOCOMA{:syntaxErrorManager.syntaxInfo("Error. Falta la expresión logica del For");:}
+         |  FOR expreAritmeLogicas error expreAritmeLogicas TO expreAritmeLogicas DO sentenciasFUN END PUNTOCOMA{:syntaxErrorManager.syntaxInfo("Error. Falta la asignación del For");:}
+         |  FOR expreAritmeLogicas ASIGNACION error TO expreAritmeLogicas DO sentenciasFUN END PUNTOCOMA{:syntaxErrorManager.syntaxInfo("Error. Falta la expresión logica antes del TO");:}
+         |  FOR expreAritmeLogicas ASIGNACION expreAritmeLogicas error expreAritmeLogicas DO sentenciasFUN END PUNTOCOMA{:syntaxErrorManager.syntaxInfo("Error. Falta el TO del For");:}
+         |  FOR expreAritmeLogicas ASIGNACION expreAritmeLogicas TO error DO sentenciasFUN END PUNTOCOMA{:syntaxErrorManager.syntaxInfo("Error. Falta la expresión logica despues del TO");:}
+         |  FOR expreAritmeLogicas ASIGNACION expreAritmeLogicas TO expreAritmeLogicas error sentenciasFUN END PUNTOCOMA{:syntaxErrorManager.syntaxInfo("Error. Falta el DO del For");:}
+         |  FOR expreAritmeLogicas ASIGNACION expreAritmeLogicas TO expreAritmeLogicas DO sentenciasFUN error PUNTOCOMA{:syntaxErrorManager.syntaxInfo("Error. Falta cerrar bloque con END");:}
+         |  FOR expreAritmeLogicas ASIGNACION expreAritmeLogicas TO expreAritmeLogicas DO sentenciasFUN END error{:syntaxErrorManager.syntaxInfo("Error. Falta punto y coma");:};
 
 //---------------------------------------------------------------------------------------
 

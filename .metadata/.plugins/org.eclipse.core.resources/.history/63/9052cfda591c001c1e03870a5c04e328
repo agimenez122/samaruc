@@ -7,4 +7,4 @@ MODULE dos;
     WRITELN;    
     WRITESTRING("Mundo!");
     
-  END dos;
+  FI dos;

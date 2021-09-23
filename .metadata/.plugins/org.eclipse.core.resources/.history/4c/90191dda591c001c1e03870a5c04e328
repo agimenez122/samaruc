@@ -24,4 +24,4 @@ MODULE cuatro;
 	bol2:=FALSE;
 	bol3:=(bol1 OR bol2);
 	    
-  END cuatro;
+  FI cuatro;

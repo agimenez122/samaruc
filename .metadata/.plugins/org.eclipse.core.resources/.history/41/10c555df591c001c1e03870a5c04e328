@@ -15,47 +15,33 @@ MODULE uno;
 			    y : BOOLEAN);
 	VAR aux, index : INTEGER;
   BEGIN
-	IF 4=5 THEN
-		aux := index;
-	END;
-  END procedimiento;
+	aux := index;
+  FI procedimiento;
 
-  PROCEDURE funcion ():BOOLEAN;
+ PROCEDURE funcion ():BOOLEAN;
         VAR aux, index : INTEGER;
-	PROCEDURE vacio;
-	BEGIN
-	END vacio;
   BEGIN 
-	FOR i:=5 TO final - i 
-	DO
-		RETURN TRUE;
-	END;
         aux := index;
-	RETURN aux;
-  END funcion;
+(*	RETURN aux;   *)
+  FI funcion;
 
-BEGIN
-	WRITELN;
-	variable0 := pepe;
-	variable1 := (3 * 4 - 2);
-	variable2 := (3-5) * (4 - 2);
+
+  BEGIN
+
+	variable1 := 3 * 4 - 2;
+	variable2 := 3 * (4 - 2);  
 	variable3 := (3 - 2 -1);
-	variable4 := variable3 - (2 - 1);
-	variable5 := (funcion() * 34 - funcion2(5,6,TRUE));
-	variable6 := numero - masnumero * ((((aleluya))));
+	variable4 := variable3 - (2 - 1); 
 
-	variable5 := (5=5);
 	variable1 := (TRUE OR (b > c)); 
 	variable2 := NOT ( a > b) OR (9 > d);
-	variable3 := (a = b) OR ((b = c)) OR (c = d);
+	variable3 := (a = b) OR (b = c) OR (c = d);
 	variable4 := (a = b) OR ((b = c) OR (c = d));
 	variable5 := 4>6;
+	variable5 := (5=5);
 	variable6 := NOT TRUE;
 	variable7 := NOT ( a OR b);
 	variable9 := (a OR TRUE);
-	variable10 := (0-4)=(2*mifuncion(TRUE));
-	variable11 := v[index] OR NOT mfuncion(4, 5, valor);
-	variable12 := NOT NOT TRUE;
 
 	
 	variable4 := (45);
@@ -63,7 +49,7 @@ BEGIN
 	variable3 := (variable2);
 	variable5 := (v[6]);
 	
-	IF uno THEN
+	IF v[5] THEN
 		variable := 45;
 		IF 4=5 THEN
 			variable := 34;
@@ -72,30 +58,19 @@ BEGIN
 			funcion1;
 			funcion2(V[4], 5, variable, TRUE);
 			funcion3();
-			IF mfuncion(TRUE) THEN
-				FOR index := 4 TO 5*2-corrector
-				DO
-					WRITESTRING("¿La vida es triste? Coño, una ñ");
-				END;
-			END;
-		END;
-		v[45] := ((4>1));	
-	END;
+
+		FI;
+	FI;
+	
 	variable := funcion2(5, 4-3);
-	IF dos THEN
-		mifuncion();
-	ELSE
-		mifuncion2();
-	END;
 
-
-	FOR indice := 0 TO resta(5-3)
+	FOR indice := 0 TO 34
 	DO
 		v[45] := 4>1;
-	END; 
+	FI;
+
 	WRITELN;
 	WRITEINT(24*3);
-	WRITESTRING("Hola Mundo!");
-END uno;	
-  
-
+	WRITESTRING("Hola Mundo!"); 
+	
+  FI uno;

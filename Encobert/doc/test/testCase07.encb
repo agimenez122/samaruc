@@ -1,6 +1,6 @@
 (* condiciona if*)
 
-MODULE siete;
+MODUL siete;
     
   VAR 	resta : INTEGER;
   		a1:INTEGER;
@@ -14,8 +14,8 @@ MODULE siete;
 		resta:=a1-b1;
 	ELSE
 		resta:=20;
-	END;    
+	FI;    
     WRITESTRING("resta (5):");
     WRITEINT(resta);
 	    
-  END siete;
+  FI siete;

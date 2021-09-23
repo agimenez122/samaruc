@@ -1,6 +1,6 @@
 (* bucle for*)
 
-MODULE ocho;
+MODUL ocho;
     
   VAR a1:INTEGER;
   
@@ -9,7 +9,7 @@ MODULE ocho;
     
 	FOR a1:=1 TO 9 DO
 		WRITEINT(a1);
-	END;    
+	FI;    
 
 	    
-  END ocho;
+  FI ocho;

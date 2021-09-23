@@ -17,18 +17,18 @@ BEGIN
 				FOR index := 4 TO 5*2-corrector
 				DO
 					WRITESTRING("¿La vida es triste? Coño, una ñ");
-				END;
-			END;
-		END;
+				FI;
+			FI;
+		FI;
 		v[45] := ((4>1));	
-	END;
+	FI;
 	variable := funcion2(5, 4-3);
 	IF dos THEN
 		mifuncion();
 	ELSE
 		mifuncion2();
-	END;
+	FI;
 
 
-END uno;	
+FI uno;	
   

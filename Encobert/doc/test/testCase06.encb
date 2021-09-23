@@ -1,6 +1,6 @@
 
 (*funciones*)
-MODULE seis;
+MODUL seis;
 
   VAR resta : INTEGER;
   		a1:INTEGER;
@@ -11,7 +11,7 @@ MODULE seis;
  	BEGIN
  		s := a-b;
  		RETURN s; 	
- 	END Restar; 	
+ 	FI Restar; 	
   
   BEGIN
     a1:=10;
@@ -21,4 +21,4 @@ MODULE seis;
     WRITESTRING("Restar:");
     WRITEINT(resta);
     
-  END seis;
+  FI seis;
