@@ -1,6 +1,0 @@
-MODULE tres;
-(* salida por pantalla resta de enteros*)
-
-  BEGIN
-    WRITEINT(2-3);
-  FI tres;

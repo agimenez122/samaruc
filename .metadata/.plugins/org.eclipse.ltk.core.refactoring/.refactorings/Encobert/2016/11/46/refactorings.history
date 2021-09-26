@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Copy element &apos;mitest2.muned&apos; to &apos;test&apos;&#x0D;&#x0A;- Original project: &apos;PCL&apos;&#x0D;&#x0A;- Destination element: &apos;test&apos;&#x0D;&#x0A;- Original element: &apos;mitest2.muned&apos;" description="Copy file" element1="doc/test/mitest2.muned" files="1" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1479329894622" target="/PCL/doc/test" units="0" version="1.0"/>
-</session>

@@ -1,9 +1,0 @@
-LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/arch=x86_64
-LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/name=Local
-LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/os=win32
-configDescList=org.eclipse.launchbar.core.descriptorType.default\:FinalTestCase,org.eclipse.launchbar.core.descriptorType.default\:LexicalTestCase,org.eclipse.launchbar.core.descriptorType.default\:SyntaxTestCase,org.eclipse.launchbar.core.descriptorType.default\:Encobert build.xml
-eclipse.preferences.version=1
-org.eclipse.launchbar.core.descriptorType.default\:Encobert\ build.xml/activeLaunchMode=run
-org.eclipse.launchbar.core.descriptorType.default\:Encobert\ build.xml/activeLaunchTarget=org.eclipse.launchbar.core.launchTargetType.local\:Local
-org.eclipse.launchbar.core.descriptorType.default\:FinalTestCase/activeLaunchMode=run
-org.eclipse.launchbar.core.descriptorType.default\:FinalTestCase/activeLaunchTarget=org.eclipse.launchbar.core.launchTargetType.local\:Local

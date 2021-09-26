@@ -1,0 +1,344 @@
+package compiler.syntax;
+
+// Declaraci�n de importaciones
+
+import java_cup.runtime.Symbol;
+import java.util.*;
+
+import es.uned.lsi.compiler.lexical.*;
+import es.uned.lsi.compiler.code.*;
+import es.uned.lsi.compiler.intermediate.*;
+import es.uned.lsi.compiler.semantic.*;
+import es.uned.lsi.compiler.semantic.symbol.*;
+import es.uned.lsi.compiler.semantic.type.*;
+import es.uned.lsi.compiler.syntax.*;
+
+import compiler.CompilerContext;
+import compiler.lexical.*;
+import compiler.syntax.nonTerminal.*;
+import compiler.semantic.*;
+import compiler.semantic.symbol.*;
+import compiler.semantic.type.*;
+import compiler.intermediate.*;
+import compiler.code.*;
+
+// Declaraci�n del c�digo de usuario
+
+action code {:
+  
+    SyntaxErrorManager   syntaxErrorManager   = CompilerContext.getSyntaxErrorManager();
+    SemanticErrorManager semanticErrorManager = CompilerContext.getSemanticErrorManager ();
+    ScopeManagerIF       scopeManager         = CompilerContext.getScopeManager ();
+    FinalCodeFactoryIF   finalCodeFactory     = CompilerContext.getFinalCodeFactory ();
+
+:}  
+
+parser code {:
+    SyntaxErrorManager syntaxErrorManager = CompilerContext.getSyntaxErrorManager();
+  
+    public void syntax_error(Symbol symbol)
+    {
+        Token token = (Token) symbol.value;
+        syntaxErrorManager.syntaxError ("Error sintactic", token);      
+    }
+      
+    public void unrecovered_syntax_error(java_cup.runtime.Symbol symbol)
+    {  
+        Token token = (Token) symbol.value;
+        syntaxErrorManager.syntaxFatalError ("Error fatal", token);
+    }
+:}
+
+// Declaracio de terminals 
+
+terminal Token ENTER;
+terminal Token LITERAL;
+terminal Token OBRIPARENT;
+terminal Token TANCAPARENT;
+terminal Token ABRECORCHE;
+terminal Token CIERCORCHE;
+terminal Token PUNTOCOMA;
+terminal Token DOSPUNTOS;
+terminal Token RESTA;
+terminal Token PRODUCTO;
+terminal Token MAYOR;
+terminal Token IGUAL;
+terminal Token DISYUNCION;
+terminal Token NEGACION;
+terminal Token ASIGNACION;
+terminal Token ACREGISTRO;
+terminal Token ACVECTOR;
+terminal Token ID;
+terminal Token COMA;
+terminal Token BEGIN;
+terminal Token FI;
+terminal Token DO;
+terminal Token BOOLEAN;
+terminal Token AND;
+terminal Token ARRAY;
+terminal Token ELSE;
+terminal Token CONST;
+terminal Token FALS;
+terminal Token FOR;
+terminal Token IF;
+terminal Token INTEGER;
+terminal Token MODUL;
+terminal Token OF;
+terminal Token PROCEDURE;
+terminal Token RECORD;
+terminal Token RETURN;
+terminal Token THEN;
+terminal Token TO; 
+terminal Token CERT;
+terminal Token TYPE;
+terminal Token VAR;  
+terminal Token WRITESTRING;
+terminal Token WRITEINT;
+terminal Token WRITELN;
+
+
+//Los siguientes terminals se comentan por ser esta practica de grupo B
+//terminal Token WHILE;
+//terminal Token DISTINTO;
+//terminal Token CONJUNCION;
+//terminal Token SUMA;
+//terminal Token DIVISION;
+//terminal Token MENOR;
+
+
+// Declaraci�n de no terminals
+// no modificar los propuestos
+
+non terminal              program;
+non terminal Axiom        axiom;
+non terminal              cabProcedimiento;
+// ...
+non terminal            decDeclaraciones;
+non terminal            decDeclara;
+non terminal            sentencia;
+non terminal            decConstantes;
+non terminal            sentenciasFUN; 
+non terminal            sentIf; 
+non terminal            sentFor;
+non terminal            decModule; 
+non terminal            valorCalc; 
+non terminal            decBloqueFun; 
+non terminal            cuerpoProcedure;
+non terminal            asignacion; 
+non terminal            cuerpoFun, expresionFun,argumentoFun; 
+non terminal            decProcedure, decParametro, decParaTipo;
+non terminal            decBloqueProg, expreVectorAcceso;
+non terminal            decTipos, decVariables, decSubProgramas;
+non terminal            decVectorInteger, expreAritmeLogicas,operador;
+non terminal            expresionVariable, expresionVariables; 
+non terminal            expresionConstantes, expresionConstante;
+non terminal            listaId, tipoVar; 
+non terminal            defVector,defVectores; 
+non terminal            return, sentReturn; 
+non terminal            valorExp, valorExpConst;
+
+
+// Declaraci�n de relaciones de precedencia     
+precedence left RESTA;
+precedence left PRODUCTO;
+precedence left DISYUNCION;
+precedence left MAYOR;
+precedence left IGUAL;
+precedence right NEGACION;
+
+
+// Declaraci�n de reglas de producci�n
+
+start with program;
+
+program ::=
+  {:
+        syntaxErrorManager.syntaxInfo ("Starting parsing...");
+   :}
+  axiom:ax
+  {:
+          // No modificar esta estructudecBloqueProgra, aunque se pueden a�adir m�s acciones sem�nticas
+          // Para la entrega de febrero pueden comentarse las dos sentencias siguientes:
+          //List intermediateCode = ax.getIntermediateCode ();
+          //finalCodeFactory.create (intermediateCode);
+          // En caso de no comentarse las sentencias anteriores puede generar una excepcion
+          // en las llamadas a cupTest en la entrega de Febrero. Esto es debido a que
+          // a�n no se tendr� implementada la generaci�n de c�digo intermedio ni final.
+          // Para la entrega de Junio deber�n descomentarse y usarse.
+        
+          syntaxErrorManager.syntaxInfo ("Parsing process ended.");
+   :};
+
+
+axiom ::= decModule decBloqueProg
+        | decModule decDeclaraciones decBloqueProg;
+    
+decModule ::= MODUL valorExp PUNTOCOMA 
+       	   | error valorExp PUNTOCOMA {:syntaxErrorManager.syntaxInfo("Error. Falta la expresi�n MODUL");:}
+       	   | MODUL valorExp error {:syntaxErrorManager.syntaxInfo("Error. Falta el punto y coma");:};
+
+
+decDeclaraciones ::= decDeclara
+                 | decDeclaraciones decDeclara ;
+
+decDeclara ::= decConstantes
+           | decTipos
+           | decVariables
+           | decSubProgramas;
+                
+decBloqueProg ::= BEGIN sentenciasFUN FI valorExp PUNTOCOMA 
+       	    //    | error sentenciasFUN FI valorExp PUNTOCOMA {:syntaxErrorManager.syntaxInfo("Error. Falta el BEGIN");:}
+       	        | BEGIN sentenciasFUN error valorExp PUNTOCOMA {:syntaxErrorManager.syntaxInfo("Error. Falta el FI");:}
+       	        | BEGIN sentenciasFUN FI valorExp error  {:syntaxErrorManager.syntaxInfo("Error. Falta el punto y coma");:};
+       	   
+
+decConstantes ::= CONST expresionConstantes ;
+
+expresionConstantes ::=  expresionConstante expresionConstantes
+                    | expresionConstante;
+
+expresionConstante  ::= listaId IGUAL valorExpConst PUNTOCOMA
+					  | listaId error valorExpConst PUNTOCOMA {:syntaxErrorManager.syntaxInfo("Error. Falta el simbolo = ");:}
+					  | listaId IGUAL valorExpConst error  {:syntaxErrorManager.syntaxInfo("Error. Falta el punto y coma");:};
+
+decVariables ::= VAR expresionVariables ;
+                
+expresionVariables ::= expresionVariable expresionVariables
+                   | expresionVariable;
+
+expresionVariable ::= listaId DOSPUNTOS tipoVar PUNTOCOMA
+                    | listaId DOSPUNTOS ID PUNTOCOMA
+                    | listaId error tipoVar PUNTOCOMA {:syntaxErrorManager.syntaxInfo("Error. Falta el simbolo : ");:}
+                    | listaId DOSPUNTOS tipoVar error {:syntaxErrorManager.syntaxInfo("Error. Falta el simbolo ; ");:}
+                    | listaId error ID PUNTOCOMA {:syntaxErrorManager.syntaxInfo("Error. Falta el simbolo : ");:}
+                    | listaId DOSPUNTOS ID error {:syntaxErrorManager.syntaxInfo("Error. Falta el simbolo ; ");:};
+                
+decTipos ::= decVectorInteger;
+
+
+defVector ::= ID IGUAL ARRAY ABRECORCHE valorCalc ACREGISTRO ACREGISTRO valorCalc CIERCORCHE OF INTEGER PUNTOCOMA
+		   |  ID IGUAL ARRAY ABRECORCHE valorCalc ACREGISTRO ACREGISTRO valorCalc CIERCORCHE OF INTEGER error
+		   		{:syntaxErrorManager.syntaxInfo("Error. Falta el simbolo ; ");:}
+		   |  ID IGUAL ARRAY ABRECORCHE valorCalc ACREGISTRO ACREGISTRO valorCalc CIERCORCHE OF BOOLEAN error
+		   		{:syntaxErrorManager.syntaxInfo("Error. Falta el simbolo ; ");:}
+		   |  ID IGUAL ARRAY ABRECORCHE valorCalc ACREGISTRO ACREGISTRO valorCalc CIERCORCHE OF BOOLEAN PUNTOCOMA;
+
+defVectores ::= defVector defVectores
+			 |  defVector;		   
+
+decVectorInteger ::= TYPE defVectores; 
+
+//--------------------------------------------------------------------------------------------------------------------------
+//Subprogramas:
+
+decSubProgramas  ::= decProcedure;
+              
+cabProcedimiento ::= PROCEDURE ID OBRIPARENT;
+
+decProcedure ::= cabProcedimiento return  cuerpoProcedure
+              |  cabProcedimiento decParametro return cuerpoFun 
+              | PROCEDURE ID PUNTOCOMA cuerpoFun;  
+               
+return ::= TANCAPARENT DOSPUNTOS tipoVar PUNTOCOMA
+         | TANCAPARENT PUNTOCOMA
+         | TANCAPARENT error  {:syntaxErrorManager.syntaxInfo("Error. Falta el punto y coma");:}
+         | TANCAPARENT DOSPUNTOS tipoVar error  {:syntaxErrorManager.syntaxInfo("Error. Falta el punto y coma");:};
+     
+decParametro ::= decParaTipo
+             | decParametro PUNTOCOMA decParaTipo ;
+            
+decParaTipo ::=  listaId DOSPUNTOS tipoVar
+            | listaId DOSPUNTOS ID
+            | listaId decParaTipo ;
+
+cuerpoProcedure ::= decDeclaraciones decBloqueProg
+                  | decBloqueProg;  
+
+cuerpoFun ::=     decDeclaraciones decBloqueFun
+                  | decBloqueFun;
+                
+decBloqueFun ::= BEGIN sentenciasFUN FI valorExp PUNTOCOMA 
+		   	   | BEGIN sentenciasFUN FI valorExp error  {:syntaxErrorManager.syntaxInfo("Error. Falta el punto y coma");:};
+
+sentenciasFUN ::= sentencia sentenciasFUN | sentReturn sentenciasFUN |;
+
+sentReturn   ::= RETURN expreAritmeLogicas PUNTOCOMA  
+			   | RETURN expreAritmeLogicas error {:syntaxErrorManager.syntaxInfo("Error. Falta el punto y coma");:};
+
+sentencia ::= WRITESTRING OBRIPARENT LITERAL TANCAPARENT PUNTOCOMA
+			| WRITESTRING error LITERAL TANCAPARENT PUNTOCOMA {:syntaxErrorManager.syntaxInfo("Error. Falta el parentesis izquierdo");:}
+			| WRITESTRING OBRIPARENT LITERAL error PUNTOCOMA {:syntaxErrorManager.syntaxInfo("Error. Falta el parentesis derecho");:}
+			| WRITESTRING OBRIPARENT LITERAL TANCAPARENT error {:syntaxErrorManager.syntaxInfo("Error. Falta el punto y coma");:}
+            | WRITELN PUNTOCOMA
+            | WRITELN error{:syntaxErrorManager.syntaxInfo("Error. Falta el punto y coma");:}
+            | WRITEINT OBRIPARENT expreAritmeLogicas TANCAPARENT PUNTOCOMA
+            | WRITEINT error expreAritmeLogicas TANCAPARENT PUNTOCOMA{:syntaxErrorManager.syntaxInfo("Error. Falta el parentesis izquierdo");:}
+            | WRITEINT OBRIPARENT expreAritmeLogicas error PUNTOCOMA{:syntaxErrorManager.syntaxInfo("Error. Falta el parentesis derecho");:}
+            | WRITEINT OBRIPARENT expreAritmeLogicas TANCAPARENT error{:syntaxErrorManager.syntaxInfo("Error. Falta el punto y coma");:}
+            | asignacion
+            | sentFor
+            | expresionFun PUNTOCOMA
+            | valorExp PUNTOCOMA
+            | sentIf;
+
+//* Y -, > Y =  Por ser de grupo B
+expreAritmeLogicas ::=  OBRIPARENT expreAritmeLogicas TANCAPARENT
+        |   NEGACION expreAritmeLogicas		  
+        |   expreAritmeLogicas operador expreAritmeLogicas
+        |   expreVectorAcceso
+        |   valorCalc
+        |   expresionFun;
+ 
+operador ::= PRODUCTO | RESTA | DISYUNCION | IGUAL | MAYOR  ;
+
+asignacion ::= valorExp ASIGNACION expreAritmeLogicas PUNTOCOMA
+		     | expreVectorAcceso ASIGNACION expreAritmeLogicas PUNTOCOMA
+			 | valorExp error expreAritmeLogicas PUNTOCOMA {:syntaxErrorManager.syntaxInfo("Error. Falta la asignaci�n ");:}
+			 | valorExp ASIGNACION expreAritmeLogicas error {:syntaxErrorManager.syntaxInfo("Error. Falta el punto y coma");:}
+			 | expreVectorAcceso error expreAritmeLogicas PUNTOCOMA {:syntaxErrorManager.syntaxInfo("Error. Falta la asignaci�n ");:}
+			 | expreVectorAcceso ASIGNACION expreAritmeLogicas error {:syntaxErrorManager.syntaxInfo("Error. Falta el punto y coma");:};
+           
+expresionFun ::= ID OBRIPARENT argumentoFun TANCAPARENT
+			 |   ID OBRIPARENT TANCAPARENT;
+
+
+argumentoFun ::= argumentoFun COMA expreAritmeLogicas
+			   | expreAritmeLogicas ;
+
+//Expresiones de acceso a vectores
+
+expreVectorAcceso ::= valorExp ABRECORCHE valorCalc CIERCORCHE;
+
+//Invocaci�n de funciones
+
+sentIf ::= IF expreAritmeLogicas THEN sentenciasFUN FI PUNTOCOMA
+       |   IF expreAritmeLogicas THEN sentenciasFUN ELSE sentenciasFUN FI PUNTOCOMA
+       |   IF expreAritmeLogicas THEN sentenciasFUN FI error{:syntaxErrorManager.syntaxInfo("Error. Falta el punto y coma del If");:}
+	   |   IF expreAritmeLogicas THEN sentenciasFUN ELSE sentenciasFUN FI error{:syntaxErrorManager.syntaxInfo("Error. Falta el punto y coma del If");:}      
+	   |   IF error THEN sentenciasFUN FI PUNTOCOMA{:syntaxErrorManager.syntaxInfo("Error. Falta la expresi�n logica del If");:}
+	   |   IF error THEN sentenciasFUN ELSE sentenciasFUN FI PUNTOCOMA{:syntaxErrorManager.syntaxInfo("Error. Falta la expresi�n logica del If");:};
+
+sentFor ::= FOR expreAritmeLogicas ASIGNACION expreAritmeLogicas TO expreAritmeLogicas DO sentenciasFUN FI PUNTOCOMA
+         |  FOR error ASIGNACION expreAritmeLogicas TO expreAritmeLogicas DO sentenciasFUN FI PUNTOCOMA{:syntaxErrorManager.syntaxInfo("Error. Falta la expresi�n logica del For");:}
+         |  FOR expreAritmeLogicas error expreAritmeLogicas TO expreAritmeLogicas DO sentenciasFUN FI PUNTOCOMA{:syntaxErrorManager.syntaxInfo("Error. Falta la asignaci�n del For");:}
+         |  FOR expreAritmeLogicas ASIGNACION error TO expreAritmeLogicas DO sentenciasFUN FI PUNTOCOMA{:syntaxErrorManager.syntaxInfo("Error. Falta la expresi�n logica antes del TO");:}
+         |  FOR expreAritmeLogicas ASIGNACION expreAritmeLogicas error expreAritmeLogicas DO sentenciasFUN FI PUNTOCOMA{:syntaxErrorManager.syntaxInfo("Error. Falta el TO del For");:}
+         |  FOR expreAritmeLogicas ASIGNACION expreAritmeLogicas TO error DO sentenciasFUN FI PUNTOCOMA{:syntaxErrorManager.syntaxInfo("Error. Falta la expresi�n logica despues del TO");:}
+         |  FOR expreAritmeLogicas ASIGNACION expreAritmeLogicas TO expreAritmeLogicas error sentenciasFUN FI PUNTOCOMA{:syntaxErrorManager.syntaxInfo("Error. Falta el DO del For");:}
+         |  FOR expreAritmeLogicas ASIGNACION expreAritmeLogicas TO expreAritmeLogicas DO sentenciasFUN error PUNTOCOMA{:syntaxErrorManager.syntaxInfo("Error. Falta cerrar bloque con FI");:}
+         |  FOR expreAritmeLogicas ASIGNACION expreAritmeLogicas TO expreAritmeLogicas DO sentenciasFUN FI error{:syntaxErrorManager.syntaxInfo("Error. Falta punto y coma");:};
+
+//---------------------------------------------------------------------------------------
+
+valorExp ::= ID; 
+            
+valorCalc ::= valorExp | valorExpConst ;
+
+tipoVar ::= INTEGER | BOOLEAN;
+      
+valorExpConst ::= ENTER
+              | CERT
+              | FALS;
+
+listaId ::= ID
+        | listaId COMA ID;
